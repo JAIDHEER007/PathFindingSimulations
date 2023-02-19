@@ -9,7 +9,9 @@ from Helpers import VideoGenerator
 from GridCollection import Grid1
 
 from Algorithms import isValid
-from Algorithms import dfs_backtracking
+from Algorithms import BFS
+
+import Links
 
 from copy import deepcopy
 
@@ -22,13 +24,13 @@ cwd = sys.path[0]
 csvStatesPath = os.path.join(cwd, '..', 'csvStates')
 
 # CSV File Name
-csvFileName = 'State175_13.csv'
+# csvFileName = 'State175_13.csv'
 
 # This Contains the final path to the csv file
-csvFilePath = os.path.join(csvStatesPath, csvFileName)
+# csvFilePath = os.path.join(csvStatesPath, csvFileName)
 
 # Online Link can also be provided
-# csvFilePath = ''
+csvFilePath = Links.state_75_75_17_1
 
 # Reading the csv file
 initialState = pd.read_csv(csvFilePath, header=None, dtype=int).to_numpy()
@@ -43,7 +45,7 @@ grid = Grid1(npgrid = initialState)
 startingLocation = (0, 8)
 
 # Set the ending Location
-endingLocation = (163, 156)
+endingLocation = (61, 65)
 
 if not isValid(grid.getShape(), startingLocation):
   raise Exception("Starting Location Outside the grid")
@@ -54,12 +56,12 @@ if not isValid(grid.getShape(), endingLocation):
 grid.set(startingLocation, 2)
 grid.set(endingLocation, 3)
 
-dfsObject = dfs_backtracking(grid, startingLocation)
+bfsObject = BFS(grid, startingLocation, corners = True)
 
-assert endingLocation == dfsObject.start()
+assert endingLocation == bfsObject.start()
 print("Found the ending Location")
 
-# imgGen = ImageGenerator(fPath, grid.stateMatrix())
+imgGen = ImageGenerator(fPath, grid.stateMatrix())
 
 # for zoomFactor in [11]:
 #   imgGen.resetCount()
