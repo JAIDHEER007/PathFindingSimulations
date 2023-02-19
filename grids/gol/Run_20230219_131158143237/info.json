@@ -1,0 +1,19 @@
+{
+  "author": "S.Jaidheer",
+  "github_id": "JAIDHEER007",
+  "iteration_info": {
+    "directory_name": "Run_20230219_131158143237",
+    "Date": "2023-02-19",
+    "Time": "13:11:58.143237",
+    "Rows": 30,
+    "Cols": 30
+  },
+  "directories_created": [
+    "Images",
+    "CSVs"
+  ],
+  "extra_info": {
+    "Algorithm": "JC Game of Life",
+    "generations": 30
+  }
+}
