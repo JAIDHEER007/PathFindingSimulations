@@ -11,6 +11,9 @@ import re
 # Defining the current working directory 
 cwd = sys.path[0]
 
+# Setting the recursion depth
+sys.setrecursionlimit(10**5)
+
 # Adding the previous folder to sys.path to import the required modules
 sys.path.append(os.path.join(cwd, '..'))
 
