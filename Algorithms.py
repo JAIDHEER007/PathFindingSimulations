@@ -9,7 +9,6 @@ directionLambdas = [
   lambda x, y: (x - 1, y - 0),  # top-left
 ]
 
-
 # A Function to check if the point of interest is inside or outside the grid
 def isValid(shape, coordinates) -> bool:
     rows, cols = shape
