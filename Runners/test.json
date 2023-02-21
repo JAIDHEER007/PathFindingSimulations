@@ -1,0 +1,16 @@
+{
+  "csvFile": "<testCSVfile>", 
+  "savePath": "<testSavepath>",
+  "startingLocation": "<testStartingLocation>",
+  "endingLocation": "<testEndingLocation>", 
+  "algorithm": {
+    "name": "<algoName>", 
+    "corners": "<corners>", 
+    "backtracking": "<bactracking required>"
+  }, 
+  "videoRequired": true, 
+  "videoDetails":{
+    "zoomFactors": [11, 13], 
+    "fps": [100, 120]
+  }
+}
