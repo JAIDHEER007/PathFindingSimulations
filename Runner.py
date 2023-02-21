@@ -3,8 +3,8 @@ import os
 import pandas as pd
 
 from Helpers import helper
-from Helpers import ImageGenerator
-from Helpers import VideoGenerator
+# from Helpers import ImageGenerator
+from Helpers import VideoGenerator_v2
 
 from GridCollection import Grid1
 
@@ -30,7 +30,7 @@ csvStatesPath = os.path.join(cwd, '..', 'csvStates')
 # csvFilePath = os.path.join(csvStatesPath, csvFileName)
 
 # Online Link can also be provided
-csvFilePath = Links.state_75_75_17_1
+csvFilePath = Links.state_175_175_7_1
 
 # Reading the csv file
 initialState = pd.read_csv(csvFilePath, header=None, dtype=int).to_numpy()
@@ -45,7 +45,7 @@ grid = Grid1(npgrid = initialState)
 startingLocation = (0, 8)
 
 # Set the ending Location
-endingLocation = (61, 65)
+endingLocation = (169, 171)
 
 if not isValid(grid.getShape(), startingLocation):
   raise Exception("Starting Location Outside the grid")
@@ -56,19 +56,16 @@ if not isValid(grid.getShape(), endingLocation):
 grid.set(startingLocation, 2)
 grid.set(endingLocation, 3)
 
-bfsObject = BFS(grid, startingLocation, corners = True)
+bfsObject = BFS(grid, startingLocation, corners = True, backtracking = True)
 
 assert endingLocation == bfsObject.start()
 print("Found the ending Location")
 
-imgGen = ImageGenerator(fPath, grid.stateMatrix())
 
-# for zoomFactor in [11]:
-#   imgGen.resetCount()
-#   imgPath = imgGen.generate(zoomFactor)
-#   print("Images Generated")
-#   VideoGenerator.saveVideo(fPath = fPath, imgPath = imgPath, fps = 100, videoName = f"Output_z{zoomFactor}")
-#   print("Video Generated")
+for zoomFactor in [11]:
+  VideoGenerator_v2.saveVideo(fPath = fPath, fps = 100, stateMatrix = grid.stateMatrix(), 
+                              zoomFactor = zoomFactor, videoName = f"Output_z{zoomFactor}")
+  print("Video Generated")
 
 
 
