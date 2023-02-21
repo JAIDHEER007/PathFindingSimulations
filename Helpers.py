@@ -67,8 +67,10 @@ class helper:
 
         return fPath 
 
+colorCodesRGB = [(0,0,0), (255, 255, 255), (255, 255, 0), (255, 0, 0), (0, 0, 255), (255, 165, 0)]
+colorCodesBRG = [(0,0,0), (255, 255, 255), (0, 255, 255), (0, 0, 255), (255, 0, 0), (0, 255, 165)]
+
 class ImageGenerator:
-  colors = [(0,0,0), (255, 255, 255), (255, 255, 0), (255, 0, 0), (0, 0, 255), (255, 165, 0)]
   def __init__(self, fpath, stateMatrix = None):
     self.__count = 0
     self.__stateMatrix = stateMatrix
@@ -132,7 +134,7 @@ class ImageGenerator:
             cMapLst.append((i, j))
             cMap[isCoordinate] = cMapLst
 
-          newGrid[(i, j)] = ImageGenerator.colors[initalState[isCoordinate]]
+          newGrid[(i, j)] = colorCodesRGB[initalState[isCoordinate]]
 
     # Saving the initial Image as Img0
     self.__saveImage(imgPath, newGrid)
@@ -141,13 +143,13 @@ class ImageGenerator:
       oldCoordinates = state[0]
       colorIndex = state[1]
       for coordinate in cMap[oldCoordinates]:
-        newGrid[coordinate] = ImageGenerator.colors[colorIndex]
+        newGrid[coordinate] = colorCodesRGB[colorIndex]
       
       self.__saveImage(imgPath, newGrid)
       
     return imgPath
 
-class VideoGenerator:
+class VideoGenerator_v1:
   def saveVideo(fPath, imgPath, fps, videoName = "Output"):    
     video_name = os.path.join(fPath, "Videos", f"{videoName}.mp4")
 
@@ -169,5 +171,60 @@ class VideoGenerator:
     for image in images:
         video.write(cv2.imread(os.path.join(imgPath, image)))
 
+    cv2.destroyAllWindows() 
+    video.release()
+
+class VideoGenerator_v2:
+  def saveVideo(fPath, fps, stateMatrix = None, zoomFactor = 3, videoName = "Output"):    
+    if stateMatrix is None:
+      raise Exception("State Matrix Can't be None")
+    
+    # Reading the InitialState
+    initialStateFilePath = os.path.join(fPath, "initialState.csv")
+    initalState = pd.read_csv(initialStateFilePath, header=None, dtype=int).to_numpy()
+
+    # Video Name
+    videoName = os.path.join(fPath, "Videos", f"{videoName}.mp4")
+
+    # Zooming the frame
+    oldShape = initalState.shape
+    newGrid = np.zeros((oldShape[0] * zoomFactor, oldShape[1] * zoomFactor, 3), dtype=np.uint8)
+    newShape = newGrid.shape
+
+    # Coordinate Mapping
+    cMap = {}
+
+    # Populating the new grid
+    for i in range(newShape[0]):
+      for j in range(newShape[1]):
+        # Populating the Color Map
+        isCoordinate = (i // zoomFactor , j // zoomFactor)
+        cMapLst = cMap.get(isCoordinate)
+        if cMapLst is None:
+          cMap[isCoordinate] = [(i, j)]
+        else:
+          cMapLst.append((i, j))
+          cMap[isCoordinate] = cMapLst
+
+        newGrid[(i, j)] = colorCodesBRG[initalState[isCoordinate]]
+
+    # Creating a Video Writer
+    height, width = newShape[:2]
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    video = cv2.VideoWriter(videoName, fourcc, fps, (width, height)) 
+
+    # Writing the initial state
+    video.write(newGrid)
+
+    # Modifiy the grid for each state and write it to video writer
+    for state in stateMatrix:
+      oldCoordinates = state[0]
+      colorIndex = state[1]
+      for coordinate in cMap[oldCoordinates]:
+        newGrid[coordinate] = colorCodesBRG[colorIndex]
+
+      video.write(newGrid)
+    
+    # Release the resources
     cv2.destroyAllWindows() 
     video.release()
