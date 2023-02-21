@@ -137,3 +137,11 @@ class BFS:
   def start(self):
     self.__traverse(self.__startCoordinates)
     return self.__endCoordinates
+
+class Runner:
+  def create(algorithm, kwargs):
+    if algorithm == 'DFS':
+      return DFS(**kwargs)
+    elif algorithm == 'BFS':
+      return BFS(**kwargs)
+      
