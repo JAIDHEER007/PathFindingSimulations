@@ -6,7 +6,7 @@ directionLambdas = [
   lambda x, y: (x - 1, y + 1),  # top-right
   lambda x, y: (x + 1, y + 1),  # bottom-right 
   lambda x, y: (x + 1, y - 1),  # bottom-left
-  lambda x, y: (x - 1, y - 0),  # top-left
+  lambda x, y: (x - 1, y - 1),  # top-left
 ]
 
 # A Function to check if the point of interest is inside or outside the grid
