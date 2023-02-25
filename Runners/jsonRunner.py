@@ -138,6 +138,10 @@ if __name__ == '__main__':
         assert endingLocation == runnerObject.start(), 'Ending Location could not be found'
         print('Found the ending location')
 
+        # Saving the stateMatrix
+        grid.saveStateMatrix(fPath = testCase_fPath)
+        print('Saved the state matrix to file')
+
         # saving the video files
         if testCase['videoRequired']:
           print('Started video processing')
