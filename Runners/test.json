@@ -1,27 +1,30 @@
 {
-  "csvFile": "https://raw.githubusercontent.com/JAIDHEER007/PathFindingSimulations/GOL_gen/grids/gol/Run_20230219_131158143237/CSVs/State_30__30__19.csv", 
   "savePath": "../TestRuns/BatchRuns",
-  "startingLocation": "0,0",
-  "endingLocation": "25,25", 
-  "testData": [
+  "batches": [
     {
-      "name": "DFS", 
-      "corners": false, 
-      "backtracking": true, 
+      "gridCSV": "https://raw.githubusercontent.com/JAIDHEER007/PathFindingSimulations/GOL_gen/grids/gol/Run_20230219_131158143237/CSVs/State_30__30__19.csv", 
+      "algorithm": "DFS",   
+      "startingLocation": "0,0", 
+      "endingLocation": "25,25", 
+      "corners": true, 
+      "backtracking": true,
       "videoRequired": true, 
       "videoDetails":{
-        "zoomFactors": [5, 7], 
-        "fpsLst": [100, 120]
+        "zoomFactors": [9], 
+        "fpsLst": [60]
       }
     },
     {
-      "name": "BFS", 
-      "corners": false, 
-      "backtracking": true, 
+      "gridCSV": "https://raw.githubusercontent.com/JAIDHEER007/PathFindingSimulations/GOL_gen/grids/gol/Run_20230219_131158143237/CSVs/State_30__30__19.csv", 
+      "algorithm": "BFS",   
+      "startingLocation": "0,0", 
+      "endingLocation": "25,25", 
+      "corners": true, 
+      "backtracking": true,
       "videoRequired": true, 
       "videoDetails":{
-        "zoomFactors": [11, 13], 
-        "fpsLst": [100, 120]
+        "zoomFactors": [13], 
+        "fpsLst": [60]
       }
     }
   ]
