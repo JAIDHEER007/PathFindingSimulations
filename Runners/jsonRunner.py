@@ -68,104 +68,120 @@ if __name__ == '__main__':
         testJson = json.load(fileHandle)  
 
     # parsing the recieved test json file
-    csvFilePath = testJson['csvFile']     # file path to recieve the initial grid
-    fpath = testJson['savePath']      # final path to save the generated files
+    savePath = testJson['savePath']      # final path to save the generated files
     
-    # Reading the csv file
-    initialState = pd.read_csv(csvFilePath, header=None, dtype=int).to_numpy()
-    print('Read the CSV')
-
-    # parsing the starting and ending locations
-    startingLocation = tuple(map(int, testJson['startingLocation'].strip().split(',')))
-    endingLocation = tuple(map(int, testJson['endingLocation'].strip().split(',')))
-
     # Creating a batch run folder to store all the batch runs in it
-
-    # Getting Current Time
-    curr = datetime.datetime.now()
-    dateStr = str(curr.date())
-    timeStr = str(curr.time())
+    dtHash = helper.getDThash()
 
     # Folder Name
-    directory = "Batch_Run_" + re.sub('\D', '', dateStr) + "_" + re.sub('\D', '', timeStr)
+    directory = "Batch_Run_" + dtHash['date'] + "_" + dtHash['time']
 
     # Final Path
-    fPath = os.path.join(fpath, directory)
+    fPath = os.path.join(savePath, directory)
 
     # Creating a Directory
     os.mkdir(fPath)
 
-    # creating the batch folders and storing the filepaths in testJson
-    for i in range(len(testJson['testData'])):
-      testJson['testData'][i]['fPath'] = helper.createFolder(cwd = fPath, 
-                                                    initialState = initialState, 
-                                                    extraInfo = testJson['testData'][i], 
-                                                    directories = ["Images", "Videos"])
+    # # creating the batch folders and storing the filepaths in testJson
+    # for i in range(len(testJson['testData'])):
+    #   testJson['batches'][i]['fPath'] = helper.createFolder(cwd = fPath, 
+    #                                                 initialState = initialState, 
+    #                                                 extraInfo = testJson['testData'][i], 
+    #                                                 directories = ["Images", "Videos"])
 
     # storing the test json in batch run folder
-    with open(os.path.join(fPath, 'test.json'), 'w') as fileHandle:
-      json.dump(testJson, fileHandle, indent = 2)
+    # with open(os.path.join(fPath, 'test.json'), 'w') as fileHandle:
+    #   json.dump(testJson, fileHandle, indent = 2)
+
+    # Logger Function
+    def logger(log: list, info: str) -> None:
+      log.append(info)
+      print(info)
 
     # parsing the test data and executing for each test case
-    for i, testCase in enumerate(testJson['testData']):
+    for i, testCase in enumerate(testJson['batches']):
       try:
-        # folder path for each test case
-        testCase_fPath = testCase['fPath']
+        # Logger list to store the logs
+        log = []
+
+        csvFilePath = testCase['gridCSV']     # file path to recieve the initial grid
+
+         # Reading the csv file
+        initialState = pd.read_csv(csvFilePath, header=None, dtype=int).to_numpy()
+        logger(log, 'CSV grid reading successful')
+
+        # Creating the Run folder
+        testCase_fPath = helper.createFolder(cwd = fPath, 
+                                             initialState = initialState, 
+                                             extraInfo = testCase, 
+                                             directories = ["Images", "Videos"])
+        
+        # Adding the testCase_fPath to testJson file
+        testCase['fPath'] = testCase_fPath
+
+        logger(log, 'Created the running directory')
+
+        # parsing the starting and ending locations
+        str2int = lambda coordinate: int(coordinate.strip())
+        startingLocation = tuple(map(str2int, testCase['startingLocation'].strip().split(',')))
+        endingLocation = tuple(map(str2int, testCase['endingLocation'].strip().split(',')))
+
+        logger(log, 'Parsed the starting and ending location')
 
         # Creating the grid object
         grid = Grid1(npgrid = initialState)
+
+        logger(log, 'Created the grid object')
 
         # checking if the starting location and ending location are valid
         if not Algorithms.isValid(grid.getShape(), startingLocation):
           raise Exception("Starting Location Outside the grid")
         if not Algorithms.isValid(grid.getShape(), endingLocation):
           raise Exception("Ending Location Outside the grid")
+        
+        logger(log, 'Starting and Ending Locations validations completed')
 
         # Setting the starting Location
         grid.set(startingLocation, 2)
         grid.set(endingLocation, 3)
 
-        runnerObject = Algorithms.Runner.create(algorithm = testCase['name'], kwargs = 
+        runnerObject = Algorithms.Runner.create(algorithm = testCase['algorithm'], kwargs = 
                                       {
                                         'grid': grid,
                                         'startCoordinates': startingLocation,
+                                        'endingCoordinates': endingLocation,
                                         'corners': testCase['corners'],
                                         'backtracking': testCase['backtracking']
                                       }
                                     )
+        logger(log, 'Created the Runner object')
 
         # Run the simulation
         assert endingLocation == runnerObject.start(), 'Ending Location could not be found'
-        print('Found the ending location')
+        logger(log, 'Found the ending location')
 
         # Saving the stateMatrix
         grid.saveStateMatrix(fPath = testCase_fPath)
-        print('Saved the state matrix to file')
+        logger(log, 'Saved the state matrix to file')
 
         # saving the video files
         if testCase['videoRequired']:
-          print('Started video processing')
+          logger(log, 'Started video processing')
           videoDetails = testCase['videoDetails']
           for vedioData in zip(videoDetails['zoomFactors'], videoDetails['fpsLst']):
             zoomFactor, fps = vedioData[0], vedioData[1]
-            curr = datetime.datetime.now()
-            currDate = re.sub('\D', '', str(curr.date()))
-            currTime = re.sub('\D', '', str(curr.time()))
+            dtHash = helper.getDThash()
             
-            outputVedioName = f"Output_z{zoomFactor}_f{fps}_d{currDate}_t{currTime}"
+            outputVedioName = f"Output_z{zoomFactor}_f{fps}_d{dtHash['date']}_t{dtHash['time']}"
             VideoGenerator_v2.saveVideo(fPath = testCase_fPath, fps = fps, stateMatrix = grid.stateMatrix(), 
                               zoomFactor = zoomFactor, videoName = outputVedioName)
-            print('Saved a video')
-            
-
+            logger(log, 'Saved a video')
 
       except Exception as exp:
-        print(exp)
-        testCase['result'] = exp.args.__repr__()
-        testJson['testData'][i]['result'] = exp.args.__repr__()
-      else:
-        testCase['result'] = 'Found the ending location'
+        logger(log, exp.args.__repr__())
       finally:
+        testCase['log'] = log
+
         # Write the new testCase file to info.json
         with open(os.path.join(testCase_fPath, 'info.json'), 'w') as fileHandle:
           json.dump(testCase, fileHandle, indent = 2)
