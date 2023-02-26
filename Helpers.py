@@ -26,14 +26,19 @@ class helper:
       "extra_info": None
     }
 
+    def getDThash():
+      curr = datetime.datetime.now()
+      return {
+              'date': re.sub('\D', '', str(curr.date())), 
+              'time': re.sub('\D', '', str(curr.time()))
+             }
+
     def createFolder(cwd, initialState, extraInfo = {}, directories = []) -> str:
         # Getting Current Time
-        curr = datetime.datetime.now()
-        dateStr = str(curr.date())
-        timeStr = str(curr.time())
+        dtHash = helper.getDThash()
 
         # Folder Name
-        directory = "Run_" + re.sub('\D', '', dateStr) + "_" + re.sub('\D', '', timeStr)
+        directory = "Run_" + dtHash['date'] + "_" + dtHash['time']
 
         # Final Path
         fPath = os.path.join(cwd, directory)
@@ -54,8 +59,8 @@ class helper:
 
         rows, cols = initialState.shape
         info = copy.deepcopy(helper.info)
-        info["iteration_info"]["Date"] = dateStr
-        info["iteration_info"]["Time"] = timeStr
+        info["iteration_info"]["Date"] = dtHash['date']
+        info["iteration_info"]["Time"] = dtHash['time']
         info["iteration_info"]["Rows"] = rows
         info["iteration_info"]["Cols"] = cols
         info["iteration_info"]["directory_name"] = directory
@@ -66,6 +71,9 @@ class helper:
           json.dump(info, fileHandle, indent = 2)
 
         return fPath 
+    
+    
+    
 
 colorCodesRGB = [(0,0,0), (255, 255, 255), (255, 255, 0), (255, 0, 0), (0, 0, 255), (255, 165, 0)]
 colorCodesBRG = [(0,0,0), (255, 255, 255), (0, 255, 255), (0, 0, 255), (255, 0, 0), (0, 255, 165)]
@@ -103,14 +111,9 @@ class ImageGenerator:
     imagesFolder = os.path.join(self.__fPath, 'Images')
 
     # Creating a new directory in Images folder
-    curr = datetime.datetime.now()
-    dateStr = str(curr.date())
-    timeStr = str(curr.time())
-    imgPath = os.path.join(imagesFolder, 'Imgs_z{zf}_d{d}_t{t}'.format(
-                            zf = zoomFactor,
-                            d = re.sub('\D', '', dateStr),
-                            t = re.sub('\D', '', timeStr)
-                          ))
+    dtHash = helper.getDThash()
+
+    imgPath = os.path.join(imagesFolder, f'Imgs_z{zoomFactor}_d{dtHash["date"]}_t{dtHash["time"]}')
 
     # Creating a Directory
     os.mkdir(imgPath)
