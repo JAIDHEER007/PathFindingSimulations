@@ -141,7 +141,13 @@ class BFS:
 class Runner:
   def create(algorithm, kwargs):
     if algorithm == 'DFS':
-      return DFS(**kwargs)
+      return DFS(grid = kwargs['grid'], 
+                 startCoordinates = kwargs['startCoordinates'], 
+                 corners = kwargs['corners'], 
+                 backtracking = kwargs['backtracking'])
     elif algorithm == 'BFS':
-      return BFS(**kwargs)
+      return BFS(grid = kwargs['grid'], 
+                 startCoordinates = kwargs['startCoordinates'], 
+                 corners = kwargs['corners'], 
+                 backtracking = kwargs['backtracking'])
       
