@@ -13,7 +13,7 @@ class Grid1:
     def set(self, coordinates, value):
       self.__npgrid[coordinates] = value
       self.__stateMatrix.append((coordinates, value))
-
+    
     def stateMatrix(self):
       # Coloring the start coordinate to same color even if it gets visited
       coordinate = None

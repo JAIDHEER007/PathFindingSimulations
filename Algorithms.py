@@ -1,3 +1,5 @@
+import random
+
 directionLambdas = [
   lambda x, y: (x + 0, y + 1),  # right
   lambda x, y: (x + 1, y + 0),  # bottom
@@ -7,6 +9,17 @@ directionLambdas = [
   lambda x, y: (x + 1, y + 1),  # bottom-right 
   lambda x, y: (x + 1, y - 1),  # bottom-left
   lambda x, y: (x - 1, y - 1),  # top-left
+]
+
+directionLambdas2 = [
+  lambda x, y: (x + 0, y + 2),  # right
+  lambda x, y: (x + 2, y + 0),  # bottom
+  lambda x, y: (x + 0, y - 2),  # left
+  lambda x, y: (x - 2, y + 0),  # top
+  lambda x, y: (x - 2, y + 2),  # top-right
+  lambda x, y: (x + 2, y + 2),  # bottom-right 
+  lambda x, y: (x + 2, y - 2),  # bottom-left
+  lambda x, y: (x - 2, y - 2),  # top-left
 ]
 
 # A Function to check if the point of interest is inside or outside the grid
@@ -137,6 +150,83 @@ class BFS:
   def start(self):
     self.__traverse(self.__startCoordinates)
     return self.__endCoordinates
+
+class recursive_backtracker:
+  def __init__(self, grid, corners = False):
+    self.__grid = grid
+    self.__corners = corners
+
+  def __recur(self, coordinates):
+    # If the coordinates are out of maze then return false
+    if not isValid(self.__grid.getShape(), coordinates): return False
+
+    # Get the self.__grid state
+    gridState = self.__grid.get(coordinates)
+
+    # if the coordinates are representing a wall then return False
+    if gridState == 1: return False
+
+    # if the coordinates are previously visited then return False
+    if gridState == 4: return False
+
+    # Now make the element at specified coordinates visited
+    self.__grid.set(coordinates, 4)
+
+    for directionIndex in random.sample(list(range(8)), 8):
+      if self.__recur(directionLambdas2[directionIndex](*coordinates)):
+        self.__grid.set(directionLambdas[directionIndex](*coordinates), 4)
+
+    return True
+
+
+  def start(self):
+    gridShape = self.__grid.getShape()
+    lambdaIndex, startFlag = 0, True
+    coordinates = (0, 0)
+    while (coordinates != (0, 0)) or startFlag:
+      # The loop started. Make the start flag as false
+      startFlag = False
+
+      # Set the grid location as wall
+      self.__grid.set(coordinates, 1)
+
+      # Calculate the new coordinates
+      newCoordinates = directionLambdas[lambdaIndex](*coordinates)
+
+      # Check if the new coordinate is valid or not
+      # if not valid move to next direction lambda and re calculate the grid
+      if not isValid(gridShape, newCoordinates):
+        lambdaIndex += 1
+        newCoordinates = directionLambdas[lambdaIndex](*coordinates)
+
+      coordinates = newCoordinates
+    
+    # Creating the cross walls
+    vwCoordinates, hwCoordinates = (0,2), (2,0)
+    while True:
+      vwFlag, hwFlag = False, False
+      if vwFlag := isValid(gridShape, vwCoordinates):
+        coordinates = vwCoordinates
+        while isValid(gridShape, coordinates):
+          self.__grid.set(coordinates, 1)
+          coordinates = directionLambdas[1](*coordinates)
+        vwCoordinates = directionLambdas2[0](*vwCoordinates)
+      if hwFlag := isValid(gridShape, hwCoordinates):
+        coordinates = hwCoordinates
+        while isValid(gridShape, coordinates):
+          self.__grid.set(coordinates, 1)
+          coordinates = directionLambdas[0](*coordinates)
+        hwCoordinates = directionLambdas2[1](*hwCoordinates)
+
+      if not (vwFlag or hwFlag):
+        break
+
+    startCoordinates = (0, 0)
+    while self.__grid.get(startCoordinates) != 0:
+      startCoordinates = (random.randrange(gridShape[0]), random.randrange(gridShape[1]))
+
+    print(startCoordinates)
+    self.__recur(startCoordinates)
 
 class Runner:
   def create(algorithm, kwargs):
