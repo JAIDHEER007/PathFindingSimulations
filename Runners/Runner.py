@@ -36,7 +36,7 @@ sys.setrecursionlimit(10**5)
 
 # Online Link can also be provided
 # csvFilePath = Links.state_75_75_17_1
-csvFilePath = '../grids/grid.csv'
+csvFilePath = 'grid.csv'
 
 # Reading the csv file
 initialState = pd.read_csv(csvFilePath, header=None, dtype=int).to_numpy()
