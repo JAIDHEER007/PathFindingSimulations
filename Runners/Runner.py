@@ -35,23 +35,25 @@ sys.setrecursionlimit(10**5)
 # csvFilePath = os.path.join(csvStatesPath, csvFileName)
 
 # Online Link can also be provided
-csvFilePath = Links.state_75_75_17_1
+# csvFilePath = Links.state_75_75_17_1
+csvFilePath = '../grids/grid.csv'
 
 # Reading the csv file
 initialState = pd.read_csv(csvFilePath, header=None, dtype=int).to_numpy()
 print('Read the CSV')
 
 # Final File Path 
-fPath = helper.createFolder(os.path.join(cwd, '..', 'TestRuns'), initialState, directories = ["Images", "Videos"])
+savePath = '/content/drive/MyDrive/PathFindingSimulations'
+fPath = helper.createFolder(os.path.join(savePath, 'TestRuns'), initialState, directories = ["Images", "Videos"])
 
 # Creating the grid object
 grid = Grid1(npgrid = initialState)
 
 # Set the Starting Location
-startingLocation = (0, 8)
+startingLocation = (1, 1)
 
 # Set the ending Location
-endingLocation = (61, 69)
+endingLocation = (199, 199)
 
 if not isValid(grid.getShape(), startingLocation):
   raise Exception("Starting Location Outside the grid")
@@ -62,16 +64,16 @@ if not isValid(grid.getShape(), endingLocation):
 grid.set(startingLocation, 2)
 grid.set(endingLocation, 3)
 
-bfsObject = BFS(grid, startingLocation, corners = True, backtracking = True)
+bfsObject = BFS(grid, startingLocation, corners = False, backtracking = True)
 
 assert endingLocation == bfsObject.start()
 print("Found the ending Location")
 
 
-for zoomFactor in [11]:
-  VideoGenerator_v2.saveVideo(fPath = fPath, fps = 100, stateMatrix = grid.stateMatrix(), 
-                              zoomFactor = zoomFactor, videoName = f"Output_z{zoomFactor}")
-  print("Video Generated")
+# for zoomFactor in [3]:
+#   VideoGenerator_v2.saveVideo(fPath = fPath, fps = 250, stateMatrix = grid.stateMatrix(), 
+#                               zoomFactor = zoomFactor, videoName = f"Output_z{zoomFactor}")
+#   print("Video Generated")
 
 
 
