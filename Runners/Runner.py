@@ -42,7 +42,8 @@ csvFilePath = Links.state_75_75_17_1
 # initialState = pd.read_csv(csvFilePath, header=None, dtype=int).to_numpy()
 # print('Read the CSV')
 
-initialState = np.zeros(shape = (175, 175), dtype=int)
+shape = (201, 201)
+initialState = np.zeros(shape = shape, dtype=int)
 
 # Final File Path 
 fPath = helper.createFolder(os.path.join(cwd, '..', 'TestRuns'), initialState, directories = ["Images", "Videos"])
@@ -56,7 +57,17 @@ print('Completed Maze Generation')
 
 gridObj.saveStateMatrix(fPath=fPath)
 
-for zoomFactor in [9]:
+for i in range(shape[0]):
+  for j in range(shape[1]):
+    gridState = gridObj.get(coordinates = (i, j))
+    if gridState == 4: 
+      gridObj.set(coordinates = (i, j), value = 0)
+
+gridObj.saveGrid(fPath = fPath)
+
+
+
+for zoomFactor in [3]:
   VideoGenerator_v2.saveVideo(fPath = fPath, fps = 300, stateMatrix = gridObj.stateMatrix(), 
                               zoomFactor = zoomFactor, videoName = f"Output_z{zoomFactor}")
   print("Video Generated")

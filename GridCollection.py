@@ -29,7 +29,11 @@ class Grid1:
       np.savetxt(fname = os.path.join(fPath, 'stateMatrix.csv'), 
                    X = [[state[0][0], state[0][1], state[1]] for state in self.__stateMatrix], 
                    delimiter = ',', fmt='%d')
-
+      
+    def saveGrid(self, fPath):
+      np.savetxt(fname = os.path.join(fPath, 'grid.csv'), 
+                   X = self.__npgrid, 
+                   delimiter = ',', fmt='%d')
       
     # @cached_property
     def getShape(self): 

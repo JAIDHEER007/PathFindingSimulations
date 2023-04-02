@@ -172,7 +172,7 @@ class recursive_backtracker:
     # Now make the element at specified coordinates visited
     self.__grid.set(coordinates, 4)
 
-    for directionIndex in random.sample(list(range(8)), 8):
+    for directionIndex in random.sample(list(range(4)), 4):
       if self.__recur(directionLambdas2[directionIndex](*coordinates)):
         self.__grid.set(directionLambdas[directionIndex](*coordinates), 4)
 
