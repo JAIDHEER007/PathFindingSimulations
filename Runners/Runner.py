@@ -70,10 +70,10 @@ assert endingLocation == bfsObject.start()
 print("Found the ending Location")
 
 
-# for zoomFactor in [11]:
-#   VideoGenerator_v2.saveVideo(fPath = fPath, fps = 200, stateMatrix = grid.stateMatrix(), 
-#                               zoomFactor = zoomFactor, videoName = f"Output_z{zoomFactor}")
-#   print("Video Generated")
+for zoomFactor in [3]:
+  VideoGenerator_v2.saveVideo(fPath = fPath, fps = 200, stateMatrix = grid.stateMatrix(), 
+                              zoomFactor = zoomFactor, videoName = f"Output_z{zoomFactor}")
+  print("Video Generated")
 
 
 
