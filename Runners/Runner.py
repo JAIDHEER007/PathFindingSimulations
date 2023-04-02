@@ -36,7 +36,7 @@ sys.setrecursionlimit(10**5)
 
 # Online Link can also be provided
 # csvFilePath = Links.state_75_75_17_1
-csvFilePath = 'grid.csv'
+csvFilePath = '../grid_151_151.csv'
 
 # Reading the csv file
 initialState = pd.read_csv(csvFilePath, header=None, dtype=int).to_numpy()
@@ -53,7 +53,7 @@ grid = Grid1(npgrid = initialState)
 startingLocation = (1, 1)
 
 # Set the ending Location
-endingLocation = (199, 199)
+endingLocation = (149, 149)
 
 if not isValid(grid.getShape(), startingLocation):
   raise Exception("Starting Location Outside the grid")
@@ -70,10 +70,10 @@ assert endingLocation == bfsObject.start()
 print("Found the ending Location")
 
 
-for zoomFactor in [11]:
-  VideoGenerator_v2.saveVideo(fPath = fPath, fps = 400, stateMatrix = grid.stateMatrix(), 
-                              zoomFactor = zoomFactor, videoName = f"Output_z{zoomFactor}")
-  print("Video Generated")
+# for zoomFactor in [11]:
+#   VideoGenerator_v2.saveVideo(fPath = fPath, fps = 200, stateMatrix = grid.stateMatrix(), 
+#                               zoomFactor = zoomFactor, videoName = f"Output_z{zoomFactor}")
+#   print("Video Generated")
 
 
 
