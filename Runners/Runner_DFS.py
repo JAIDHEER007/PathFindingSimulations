@@ -15,7 +15,7 @@ from Helpers import VideoGenerator_v2
 from GridCollection import Grid1
 
 from Algorithms import isValid
-from Algorithms import BFS
+from Algorithms import DFS
 
 import Links
 
@@ -64,9 +64,9 @@ if not isValid(grid.getShape(), endingLocation):
 grid.set(startingLocation, 2)
 grid.set(endingLocation, 3)
 
-bfsObject = BFS(grid, startingLocation, corners = False, backtracking = True)
+dfsObject = DFS(grid, startingLocation, corners = False, backtracking = True)
 
-assert endingLocation == bfsObject.start()
+assert endingLocation == dfsObject.start()
 print("Found the ending Location")
 
 
